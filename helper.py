@@ -17,13 +17,19 @@ from .res4lyf import RESplain
 def get_torch_device():
     return comfy.model_management.get_torch_device()
 
+def is_directml_enabled() -> bool:
+    comfy_directml_check = getattr(comfy.model_management, "is_directml_enabled", None)
+    if comfy_directml_check is None:
+        return False
+    return comfy_directml_check()
+
 def fp64_available(device) -> bool:
     if device is None:
         return True
     device = torch.device(device)
     if device.type == 'mps':
         return False
-    if device.type != 'cpu' and comfy.model_management.is_directml_enabled():
+    if device.type != 'cpu' and is_directml_enabled():
         return False
     return True
 

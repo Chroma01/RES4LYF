@@ -5,6 +5,8 @@ from comfy.ldm.modules.attention import attention_pytorch
 
 import comfy.model_management
 
+from ..helper import is_directml_enabled
+
 def attention(q: Tensor, k: Tensor, v: Tensor, pe: Tensor, mask=None) -> Tensor:
     q, k = apply_rope(q, k, pe)
 
@@ -20,7 +22,7 @@ def attention(q: Tensor, k: Tensor, v: Tensor, pe: Tensor, mask=None) -> Tensor:
 
 def rope(pos: Tensor, dim: int, theta: int) -> Tensor:
     assert dim % 2 == 0
-    if comfy.model_management.is_device_mps(pos.device) or comfy.model_management.is_intel_xpu() or comfy.model_management.is_directml_enabled():
+    if comfy.model_management.is_device_mps(pos.device) or comfy.model_management.is_intel_xpu() or is_directml_enabled():
         device = torch.device("cpu")
     else:
         device = pos.device
